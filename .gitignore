@@ -1,1 +1,2 @@
 cmake-buld-debug #Ignorer le dossier cmake
+.idea #Ignorer le dossier .idea
