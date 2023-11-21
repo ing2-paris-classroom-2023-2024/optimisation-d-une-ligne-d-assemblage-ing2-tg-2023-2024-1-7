@@ -20,10 +20,10 @@ struct arc{
 typedef struct arc t_arc;
 
 //structure sommet
-typedef struct Sommet{
+typedef struct sommet{
 
-    int valeur;
-    int marque;
+    int valeur; //numéro de l'opération
+    float marque; // temps opération
     t_arc *arc;
 
 }t_sommet;
