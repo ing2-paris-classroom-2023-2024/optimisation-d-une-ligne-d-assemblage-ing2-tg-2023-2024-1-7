@@ -2,10 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7.exe"
-		},
-		{
-			"path" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7.pdb"
+			"path" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7"
 		}
 	],
 	"backtrace" : 1,
@@ -38,7 +35,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu99 -fdiagnostics-color=always"
+					"fragment" : "-g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics"
 				}
 			],
 			"language" : "C",
@@ -68,16 +65,12 @@
 			{
 				"fragment" : "",
 				"role" : "flags"
-			},
-			{
-				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
-				"role" : "libraries"
 			}
 		],
 		"language" : "C"
 	},
 	"name" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7",
-	"nameOnDisk" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7.exe",
+	"nameOnDisk" : "optimisation-d-une-ligne-d-assemblage-ing2-tg-2023-2024-1-7",
 	"paths" : 
 	{
 		"build" : ".",

@@ -128,6 +128,7 @@ void afficher_graphe(t_graphe grf) {
 
 int main(){
 
+
     t_graphe precedence; // création du graphe 1
 
     //récupération du nom du fichier
