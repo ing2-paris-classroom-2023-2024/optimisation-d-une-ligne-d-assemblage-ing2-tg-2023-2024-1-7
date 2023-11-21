@@ -1,1 +1,2 @@
 .idea #Ignorer le dossier .idea
+CMakeLists.txt #Ignorer le Cmake
