@@ -134,7 +134,7 @@ int main(){
     //récupération du nom du fichier
     char recip_nom[50];
     char *nom;
-    printf("Rentrez le nom du fichier à lire :\n");
+    printf("Rentrez le nom du fichier a lire :\n");
     gets(recip_nom);
     nom = malloc(strlen(recip_nom)+1 * sizeof(char *));
     strcpy(nom, recip_nom);
