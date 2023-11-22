@@ -1,6 +1,6 @@
 //
 // Created by lucas on 19/11/2023.
-//
+// commit et push uniquement ce qu'on a modifié
 
 #include "header.h"
 
@@ -93,7 +93,7 @@ void init_graphe (char *nomfichier, t_graphe *grf)
 {
     FILE *fichier = fopen(nomfichier,"r");
     if(!fichier){
-        printf("Erreur de lecture du fichier\n");
+        printf("Erreur de lecture du fichier1\n");
         exit(-1);
     }
 
@@ -125,10 +125,30 @@ void afficher_graphe(t_graphe grf) {
         }
     }
 }
+void afficher_temps_cycle(char *nom_fichier,int *temps) {
+    FILE *fichier = fopen(nom_fichier, "r");
+    if (fichier==NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        printf("Erreur lors de l'ouverture du fichier %s\n", nom_fichier);
+    }
+    int result = fscanf(fichier, "%d", temps);
+    if (result == 1) {
+        fclose(fichier);
+        // Afficher le temps d'un cycle
+        printf("Contenu lu depuis %s : temps de cycle : %d secondes\n", nom_fichier, *temps);
+        exit(-1);
+    } else if (result == 0) {
+        fclose(fichier);
+        printf("Le contenu du fichier %s n'est pas un nombre entier\n", nom_fichier);
+        exit(-1);
+    } else {
+        fclose(fichier);
+        printf("Erreur lors de la lecture du fichier %s\n", nom_fichier);
+        exit(-1);
+    }
+}
 
 int main(){
-
-
     t_graphe precedence; // création du graphe 1
 
     //récupération du nom du fichier
@@ -139,10 +159,19 @@ int main(){
     nom = malloc(strlen(recip_nom)+1 * sizeof(char *));
     strcpy(nom, recip_nom);
     fflush(NULL);
+    int temps;
+    if (strcmp(nom, "../temps_cycle.txt") == 0) {
+        // Afficher le temps de cycle
+        afficher_temps_cycle(nom, &temps);
+    } else {
+        // Initialisation du graphe
+        init_graphe(nom, &precedence);
 
-    //initialisation du graphe
-    init_graphe(nom, &precedence);
+        // Affichage precedence
+        afficher_graphe(precedence);
+    }
 
-    //affichage
-    afficher_graphe(precedence);
+    free(nom);
+
+
 }
