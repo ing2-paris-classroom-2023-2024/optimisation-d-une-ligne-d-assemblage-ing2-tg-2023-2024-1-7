@@ -7,17 +7,18 @@
 //création des sommets
 void creerSommet (t_graphe *grf, FILE *fichier){
 
-    int S1 = 0, S2 = 0, ordre = 0, temps = 1, comptage = 0;
+    int S1 = 0, ordre = 0, marque = 1, comptage = 0;
+    float S2 = 0;
     grf->sommet = (t_sommet*)malloc((ordre+1)* sizeof(t_sommet));
 
-    while (fscanf(fichier, "%d" "%f", &S1, &S2)==2){
+    while (fscanf(fichier, "%d %f", &S1, &S2)==2){
 
         for(int i = 0; i<=ordre; i++){
             if(grf->sommet[i].valeur == S1){
-                temps = 0;
+                marque = 0;
             }
         }
-        if(temps==1){
+        if(marque==1){
             ordre++;
             grf->sommet = (t_sommet*)realloc(grf->sommet, (ordre+1) * sizeof(t_sommet));
             grf->sommet[comptage].valeur = S1;
@@ -25,7 +26,7 @@ void creerSommet (t_graphe *grf, FILE *fichier){
             grf->sommet[comptage].arc = NULL;
             comptage++;
         }
-        temps = 1;
+        marque = 1;
     }
     grf->ordre = ordre;
 }
@@ -90,31 +91,34 @@ void creerArrete(t_graphe *grf, FILE *fichier) {
     grf->taille=i;
 }
 
-void init_graphe (char *nomfichier, t_graphe *grf)
+void init_graphe (char *nomfichier_op, char *nomfichier_pre, t_graphe *grf)
 {
-    FILE *fichier = fopen(nomfichier,"r");
-    if(!fichier){
+    FILE *fichier_op = fopen(nomfichier_op,"r");
+    FILE *fichier_pre = fopen(nomfichier_pre, "r");
+    if(!fichier_op){
+        printf("Erreur de lecture du fichier1\n");
+        exit(-1);
+    }
+    if(!fichier_pre){
         printf("Erreur de lecture du fichier1\n");
         exit(-1);
     }
 
     //création et initialisation des sommets
-    fseek(fichier, 0, SEEK_SET); // on retourne au début du fichier
-    creerSommet(grf, fichier);
+    fseek(fichier_op, 0, SEEK_SET); // on retourne au début du fichier
+    creerSommet(grf, fichier_op);
 
     //création et initialisation des arrêtes
-    fseek(fichier, 0, SEEK_SET); // on retourne au début du fichier
-    creerArrete(grf, fichier);
+    fseek(fichier_pre, 0, SEEK_SET); // on retourne au début du fichier
+    creerArrete(grf, fichier_pre);
 }
 
 void afficher_graphe(t_graphe grf) {
     printf("Ordre : %d \n", grf.ordre);
     printf("Sommets : \n");
     for (int i = 0; i < grf.ordre; i++) {
-        printf("%d %f ", grf.sommet[i].valeur,grf.sommet[i].temps);
-
+        printf("Nom: %d  Valeur: %f\n", grf.sommet[i].valeur,grf.sommet[i].temps);
     }
-
     printf("\n");
     printf("Taille : %d \n", grf.taille);
     printf("Arretes : \n");
@@ -138,11 +142,9 @@ void afficher_temps_cycle(char *nom_fichier,int *temps) {
         fclose(fichier);
         // Afficher le temps d'un cycle
         printf("Contenu lu depuis %s : temps de cycle : %d secondes\n", nom_fichier, *temps);
-        exit(-1);
     } else if (result == 0) {
         fclose(fichier);
         printf("Le contenu du fichier %s n'est pas un nombre entier\n", nom_fichier);
-        exit(-1);
     } else {
         fclose(fichier);
         printf("Erreur lors de la lecture du fichier %s\n", nom_fichier);
@@ -152,28 +154,35 @@ void afficher_temps_cycle(char *nom_fichier,int *temps) {
 
 int main(){
     t_graphe precedence; // création du graphe 1
+    int temps_cycle;
 
     //récupération du nom du fichier
     char recip_nom[50];
-    char *nom;
+    char fic_precedence[50];
+    char fic_temps_cycle[50];
+    char fic_operation[50];
+    char fic_exclusion[50];
+    strcpy(fic_precedence, "../precedence.txt");
+    strcpy(fic_operation, "../operations.txt");
+    strcpy(fic_temps_cycle, "../temps_cycle.txt");
+
+    //Pour que l'utilisateur puisse choisir le fichier qu'il souhaite
+    /*char *nom;
     printf("Rentrez le nom du fichier a lire :\n");
     gets(recip_nom);
     nom = malloc(strlen(recip_nom)+1 * sizeof(char *));
     strcpy(nom, recip_nom);
-    fflush(NULL);
-    int temps;
-    if (strcmp(nom, "../temps_cycle.txt") == 0) {
-        // Afficher le temps de cycle
-        afficher_temps_cycle(nom, &temps);
-    } else {
-        // Initialisation du graphe
-        init_graphe(nom, &precedence);
+    fflush(NULL);*/
 
-        // Affichage precedence
-        afficher_graphe(precedence);
-    }
+    // Afficher le temps de cycle
+    afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
+    // Initialisation du graphe
+    init_graphe(fic_operation, fic_precedence, &precedence);
 
-    free(nom);
+    // Affichage precedence
+    afficher_graphe(precedence);
+
+    //free(nom);
 
 
 }
