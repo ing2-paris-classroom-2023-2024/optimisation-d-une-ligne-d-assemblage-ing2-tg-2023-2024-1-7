@@ -12,8 +12,9 @@
 //liste chainé d'arc
 struct arc{
 
-    int sommet;
-    int poids;
+    int sommet; //nom sommet destination
+    int poids; //poids de l'arrête
+    int type; //permet de savoir si c'est une arrête du graphe de précédence (=0) ou une liaison d'exclusion (=1)
     struct arc* arc_suivant;
 
 };
