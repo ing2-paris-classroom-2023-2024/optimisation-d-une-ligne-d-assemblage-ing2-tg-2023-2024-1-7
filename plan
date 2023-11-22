@@ -2,13 +2,13 @@ Propositions
 
 Contraintes d'exclusion: (2 idée)
 -Ford-Fulkerson (pas le plus optimal pour le context mais possible)
--arbre de couverture minimale -> Faire un arbre utliser Kurskal ou prim et grace à l'arbre minimal déterminer un ordre d'opération
+-arbre de couverture minimale -> Faire un arbre utliser Kurskal ou prim et grâce à l'arbre minimal déterminer un ordre d'opérations
 
 Contraintes de précédence:
 -Faire un graphe orienté acyclique et utilisé l'algorithme de Kahn (tenir compte de la contrainte d'exclusion)
 
 Contrainte de temps de cycle:
--Utiliser l'algo de Kahn (ordonner les opération) + pour la gestion du tesmps parcourir chaque opération dans l'odre de Kahn
-et attribuer à la station disponible qui respecte les contrainte de temps.
-(On peut aussi faire un suivi du temps total consacré à chaque station et vérifier si le tremps n'est pas dépassé.
+-Utiliser l'algo de Kahn (ordonner les opération) + pour la gestion du temps parcourir chaque opération dans l'ordre de Kahn
+et attribuer à la station disponible qui respecte les contraintes de temps.
+(On peut aussi faire un suivi du temps total consacré à chaque station et vérifier si le temps n'est pas dépassé.
 
