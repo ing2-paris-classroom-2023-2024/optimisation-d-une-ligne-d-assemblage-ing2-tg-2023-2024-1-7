@@ -111,6 +111,7 @@ void afficher_graphe(t_graphe grf) {
     printf("Sommets : \n");
     for (int i = 0; i < grf.ordre; i++) {
         printf("%d ", grf.sommet[i].valeur);
+        
     }
 
     printf("\n");
