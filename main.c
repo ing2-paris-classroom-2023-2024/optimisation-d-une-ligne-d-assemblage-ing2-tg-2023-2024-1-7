@@ -72,7 +72,7 @@ void creerArrete(t_graphe *grf, FILE *fichier, int type) {
             j++;
         }
         if (type == 1){
-            while (s2 != grf->sommet[j].valeur){
+            while (s2 != grf->sommet[l].valeur){
                 l++;
             }
         }
@@ -168,6 +168,24 @@ void afficher_graphe(t_graphe grf) {
         while (arc_actuel != NULL) {
             if (arc_actuel->type==0) {
                 printf("%d %d %d\n", grf.sommet[i].valeur, arc_actuel->sommet, arc_actuel->poids);
+                arc_actuel = arc_actuel->arc_suivant;
+            }
+            else {
+                arc_actuel = arc_actuel->arc_suivant;
+            }
+        }
+    }
+    printf("\n");
+    printf("Exclusion : \n");
+    for (int i = 0; i < grf.ordre; i++) {
+        t_arc *arc_actuel = grf.sommet[i].arc;
+
+        while (arc_actuel != NULL) {
+            if (arc_actuel->type==1) {
+                printf("%d %d %d\n", grf.sommet[i].valeur, arc_actuel->sommet, arc_actuel->poids);
+                arc_actuel = arc_actuel->arc_suivant;
+            }
+            else {
                 arc_actuel = arc_actuel->arc_suivant;
             }
         }
