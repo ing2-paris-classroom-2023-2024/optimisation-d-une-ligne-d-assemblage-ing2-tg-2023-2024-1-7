@@ -23,7 +23,7 @@ typedef struct arc t_arc;
 typedef struct sommet{
 
     int valeur; //numéro de l'opération
-    float marque; // temps opération
+    float temps; // temps opération
     t_arc *arc;
 
 }t_sommet;

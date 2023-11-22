@@ -7,24 +7,25 @@
 //création des sommets
 void creerSommet (t_graphe *grf, FILE *fichier){
 
-    int S1 = 0, ordre = 0, marque = 1, comptage = 0;
+    int S1 = 0, S2 = 0, ordre = 0, temps = 1, comptage = 0;
     grf->sommet = (t_sommet*)malloc((ordre+1)* sizeof(t_sommet));
 
-    while (fscanf(fichier, "%d", &S1)==1){
+    while (fscanf(fichier, "%d" "%f", &S1, &S2)==2){
 
         for(int i = 0; i<=ordre; i++){
             if(grf->sommet[i].valeur == S1){
-                marque = 0;
+                temps = 0;
             }
         }
-        if(marque==1){
+        if(temps==1){
             ordre++;
             grf->sommet = (t_sommet*)realloc(grf->sommet, (ordre+1) * sizeof(t_sommet));
             grf->sommet[comptage].valeur = S1;
+            grf->sommet[comptage].temps = S2;
             grf->sommet[comptage].arc = NULL;
             comptage++;
         }
-        marque = 1;
+        temps = 1;
     }
     grf->ordre = ordre;
 }
@@ -110,8 +111,8 @@ void afficher_graphe(t_graphe grf) {
     printf("Ordre : %d \n", grf.ordre);
     printf("Sommets : \n");
     for (int i = 0; i < grf.ordre; i++) {
-        printf("%d ", grf.sommet[i].valeur);
-        
+        printf("%d %f ", grf.sommet[i].valeur,grf.sommet[i].temps);
+
     }
 
     printf("\n");
