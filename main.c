@@ -4,6 +4,10 @@
 
 #include "header.h"
 
+/**********************************************************************************************************************
+ * Création des sommets
+ *********************************************************************************************************************/
+
 //création des sommets
 void creerSommet (t_graphe *grf, FILE *fichier){
 
@@ -30,6 +34,10 @@ void creerSommet (t_graphe *grf, FILE *fichier){
     }
     grf->ordre = ordre;
 }
+
+/**********************************************************************************************************************
+ * Création des arêtes de type 0 et 1
+ *********************************************************************************************************************/
 
 // Initialisation des arrêtes
 void creerArrete(t_graphe *grf, FILE *fichier, int type) {
@@ -120,6 +128,10 @@ void creerArrete(t_graphe *grf, FILE *fichier, int type) {
     }
 }
 
+/**********************************************************************************************************************
+ * Chargement fichier de précédence et opérations
+ *********************************************************************************************************************/
+
 void init_graphe (char *nomfichier_op, char *nomfichier_pre, t_graphe *grf){
 
     FILE *fichier_op = fopen(nomfichier_op,"r");
@@ -142,6 +154,10 @@ void init_graphe (char *nomfichier_op, char *nomfichier_pre, t_graphe *grf){
     creerArrete(grf, fichier_pre, 0);
 }
 
+/**********************************************************************************************************************
+ * Chargement fichier d'exclusion
+ *********************************************************************************************************************/
+
 void init_exclusion (char *nomfichier_exclu, t_graphe *grf){
     FILE *fichier_exclu = fopen(nomfichier_exclu,"r");
     if(!fichier_exclu){
@@ -152,6 +168,10 @@ void init_exclusion (char *nomfichier_exclu, t_graphe *grf){
     fseek(fichier_exclu, 0, SEEK_SET); // on retourne au début du fichier
     creerArrete(grf, fichier_exclu, 1);
 }
+
+/**********************************************************************************************************************
+ * Affichage du graphe
+ *********************************************************************************************************************/
 
 void afficher_graphe(t_graphe grf) {
     printf("Ordre : %d \n", grf.ordre);
@@ -191,6 +211,10 @@ void afficher_graphe(t_graphe grf) {
         }
     }
 }
+/**********************************************************************************************************************
+ * Chargement temps de cycle
+ *********************************************************************************************************************/
+
 void afficher_temps_cycle(char *nom_fichier,int *temps) {
     FILE *fichier = fopen(nom_fichier, "r");
     if (fichier==NULL) {
@@ -211,6 +235,48 @@ void afficher_temps_cycle(char *nom_fichier,int *temps) {
         exit(-1);
     }
 }
+
+/**********************************************************************************************************************
+ * Réponse à la contrainte d'exclusion
+ *********************************************************************************************************************/
+
+//recherche des adjacence
+
+void adjacence (t_graphe *grf){
+    printf("In ");
+    int j=0;
+    for (int i=0; i<=grf->ordre; i++){
+        grf->sommet[i].sommet_adjacent =(int*)malloc(sizeof(int));
+        t_arc* arc_actuel =  grf->sommet[i].arc;
+        printf("FOR ");
+        while (arc_actuel!=NULL){
+            if(arc_actuel->type==1){
+                printf("A ");
+                grf->sommet[i].sommet_adjacent[j] = arc_actuel->sommet;
+                printf("B ");
+                j++;
+                printf("C ");
+                grf->sommet[i].sommet_adjacent = (int*)realloc(grf->sommet[i].sommet_adjacent, (j+1) * sizeof(int));
+                printf("WHILE ");
+            }
+            else {
+                arc_actuel = arc_actuel->arc_suivant;
+            }
+        }
+    }
+    printf("END ");
+}
+
+void affichage_adjacence (t_graphe grf){
+    for (int i=0; i<=grf.ordre; i++){
+        printf("Le sommet %d : ", grf.sommet[i].valeur);
+        for (int j=0; j<= strlen(grf.sommet[i].sommet_adjacent); j++){
+            printf("%d", grf.sommet[i].sommet_adjacent[j]);
+        }
+        printf("\n");
+    }
+}
+
 
 int main(){
     t_graphe graphe; // création du graphe 1
@@ -242,8 +308,14 @@ int main(){
     //chargement des exclusions
     init_exclusion(fic_exclusion, &graphe);
 
-    // Affichage precedence
-    afficher_graphe(graphe);
+    //adjacence
+    adjacence(&graphe);
+
+    // Affichage graphe
+    //afficher_graphe(graphe);
+
+    //Affichage adjacence
+    affichage_adjacence(graphe);
 
     //free(nom);
 
