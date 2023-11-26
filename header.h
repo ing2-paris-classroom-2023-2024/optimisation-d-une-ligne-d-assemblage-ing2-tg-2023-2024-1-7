@@ -24,7 +24,7 @@ typedef struct arc t_arc;
 typedef struct sommet{
 
     int valeur; //numéro de l'opération
-    int *sommet_adjacent;
+    int* sommet_adjacent;
     float temps; // temps opération
     t_arc *arc;
 
@@ -41,6 +41,7 @@ typedef struct graphe{
 
 typedef struct workstation{
     t_sommet* sommet_in;
+    int nb_operation;
 }t_workstation;
 
 #endif //OPTIMISATION_D_UNE_LIGNE_D_ASSEMBLAGE_ING2_TG_2023_2024_1_7_HEADER_H
