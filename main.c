@@ -213,7 +213,7 @@ void afficher_temps_cycle(char *nom_fichier,int *temps) {
 }
 
 int main(){
-    t_graphe precedence; // création du graphe 1
+    t_graphe graphe; // création du graphe 1
     int temps_cycle;
 
     //récupération du nom du fichier
@@ -238,12 +238,12 @@ int main(){
     // Afficher le temps de cycle
     afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
     // Initialisation du graphe
-    init_graphe(fic_operation, fic_precedence, &precedence);
+    init_graphe(fic_operation, fic_precedence, &graphe);
     //chargement des exclusions
-    init_exclusion(fic_exclusion, &precedence);
+    init_exclusion(fic_exclusion, &graphe);
 
     // Affichage precedence
-    afficher_graphe(precedence);
+    afficher_graphe(graphe);
 
     //free(nom);
 
