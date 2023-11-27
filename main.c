@@ -291,28 +291,34 @@ void assign_station (t_graphe grf, t_chaine_op *stat) {
 
         printf("3\n");
         printf("nb_station %d", stat->nb_station);
-        for (int i = 1; i < grf.ordre; i++) {
+        for (int i = 1; i < grf.ordre; i++) { // tableau de sommet
             int k=0;
-            int ajout = 0;
+            int ajout = 1;
             printf("4\n");
-            for (int j = 0; grf.sommet[i].sommet_adjacent[j] != -1; j++) {
+            for (int j = 0; grf.sommet[i].sommet_adjacent[j] != -1; j++) { //tableau d'exclusion
                 printf("5\n");
-                    for (int l = 0; l < comptage_som; l++) {
+                    for (int l = 0; l < stat->workstation[k].nb_operation; l++) {
                         printf("6\n");
-                        if (grf.sommet[i].sommet_adjacent[j] == stat->workstation[0].sommet_in[l].valeur) {
+                        // si égalité alors exclusion donc changement de station
+                        if (grf.sommet[i].sommet_adjacent[j] == stat->workstation[k].sommet_in[l].valeur) {
                             k++;
                             printf("7\n");
+                            //création nouvelle station
                             if(k+1>stat->nb_station){
                                 stat->nb_station = k+1;
                                 stat->workstation = (t_workstation*)realloc(stat->workstation, stat->nb_station * sizeof(t_workstation));
-                                stat->workstation[k].nb_operation = 0;
+                                stat->workstation[k].nb_operation = 1;
+                                stat->workstation[k].sommet_in = (t_sommet *) malloc(stat->workstation[k].nb_operation * sizeof(t_sommet)); //allocation dynamique 1er sommet
+                                stat->workstation[k].sommet_in[0] = grf.sommet[i]; //Ajoute le 1er sommet
                                 printf("8\n");
+                                ajout = 0;
                             }
-                            l = 0;
+                            else {
+                                j=-1;
+                                break;
+                            }
+                           // l = 0; // on re scan
                             printf("9\n");
-                        }
-                        else {
-                            ajout = 1;
                         }
                         printf("10\n");
                     }
