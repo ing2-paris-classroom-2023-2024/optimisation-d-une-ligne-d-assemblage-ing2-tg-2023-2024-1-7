@@ -362,8 +362,9 @@ void affichage_adjacence (t_graphe grf){
 
 
 int main(){
+
     t_graphe graphe; // création du graphe 1
-    t_chaine_op station_op; //création d'une liste de workstation
+    t_chaine_op station_op; //création d'une chaine de production
     int temps_cycle;
     int nb_stat;
 
@@ -386,28 +387,39 @@ int main(){
     strcpy(nom, recip_nom);
     fflush(NULL);*/
 
-    // Afficher le temps de cycle
-    afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
+    /*******************************************************************************************************************
+     *
+     * Ne pas décommenter !! Fonction essentiel au fonctionnement
+     *
+     *******************************************************************************************************************/
     // Initialisation du graphe
     init_graphe(fic_operation, fic_precedence, &graphe);
     //chargement des exclusions
     init_exclusion(fic_exclusion, &graphe);
-
     //adjacence
     adjacence(&graphe);
-
     //Calcul des workstation
     assign_station(graphe, &station_op);
+    /*******************************************************************************************************************
+     *******************************************************************************************************************/
+
+
+    ///FONCTION D'AFFICHAGE D'INFO//////////////////////////////
+
+    // Afficher le temps de cycle
+    //afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
 
     // Affichage graphe
     //afficher_graphe(graphe);
 
     //Affichage adjacence
-    affichage_adjacence(graphe);
+    //affichage_adjacence(graphe);
 
     //Affichage des station
     affiche_workstation(station_op);
+    ///////////////////////////////////////////////////////////
 
+    ///Libération mémoire//////////////////////////////////////
     //free(nom);
 
 
