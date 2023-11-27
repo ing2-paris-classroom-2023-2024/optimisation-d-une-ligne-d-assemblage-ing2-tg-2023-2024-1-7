@@ -44,4 +44,9 @@ typedef struct workstation{
     int nb_operation;
 }t_workstation;
 
+typedef struct chaine_op{
+    t_workstation *workstation;
+    int nb_station;
+}t_chaine_op;
+
 #endif //OPTIMISATION_D_UNE_LIGNE_D_ASSEMBLAGE_ING2_TG_2023_2024_1_7_HEADER_H

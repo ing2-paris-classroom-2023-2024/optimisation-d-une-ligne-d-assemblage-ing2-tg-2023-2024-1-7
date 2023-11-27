@@ -264,29 +264,34 @@ void adjacence (t_graphe *grf){
 
 //répartition des workstation
 
-void assign_station (t_graphe grf, t_workstation **work, int *nb_station) {
+void assign_station (t_graphe grf, t_chaine_op *stat) {
 
     //Init val = 0
-    *nb_station = 0;
+    stat->nb_station = 0;
+    printf("nb_station %d", stat->nb_station);
+
     int comptage_som = 0;
 
     //Si ordre > 0 alors il y a au moins une station
     if (grf.ordre != 0) {
-        *nb_station++;
+        stat->nb_station = stat->nb_station + 1;
+        printf("nb_station %d", stat->nb_station);
     }
     printf("1\n");
-    if (*nb_station > 0) {
+    if (stat->nb_station > 0) {
+
         //on ajoute le premier sommet//
         printf("2\n");
         comptage_som++;
-        work = (t_workstation **) malloc(*nb_station * sizeof(t_workstation*)); //allocation dynamique 1er station
-        work[0]->sommet_in = (t_sommet *) malloc(comptage_som * sizeof(t_sommet)); //allocation dynamique 1er sommet
-        work[0]->sommet_in[comptage_som - 1] = grf.sommet[0]; //Ajoute le 1er sommet
-        work[0]->nb_operation = comptage_som; // save nb sommet
+        stat->workstation = (t_workstation *) malloc(stat->nb_station * sizeof(t_workstation)); //allocation dynamique 1er station
+        stat->workstation[0].sommet_in = (t_sommet *) malloc(comptage_som * sizeof(t_sommet)); //allocation dynamique 1er sommet
+        stat->workstation[0].sommet_in[comptage_som - 1] = grf.sommet[0]; //Ajoute le 1er sommet
+        stat->workstation[0].nb_operation = comptage_som; // save nb sommet
         //                          //
-        printf("3\n");
 
-        for (int i = 0; i < grf.ordre; i++) {
+        printf("3\n");
+        printf("nb_station %d", stat->nb_station);
+        for (int i = 1; i < grf.ordre; i++) {
             int k=0;
             int ajout = 0;
             printf("4\n");
@@ -294,13 +299,13 @@ void assign_station (t_graphe grf, t_workstation **work, int *nb_station) {
                 printf("5\n");
                     for (int l = 0; l < comptage_som; l++) {
                         printf("6\n");
-                        if (grf.sommet[i].sommet_adjacent[j] == work[k]->sommet_in[l].valeur) {
+                        if (grf.sommet[i].sommet_adjacent[j] == stat->workstation[0].sommet_in[l].valeur) {
                             k++;
                             printf("7\n");
-                            if(k>*nb_station){
-                                *nb_station = k;
-                                work = (t_workstation**)realloc(work, *nb_station * sizeof(t_workstation*));
-                                work[k]->nb_operation = 0;
+                            if(k+1>stat->nb_station){
+                                stat->nb_station = k+1;
+                                stat->workstation = (t_workstation*)realloc(stat->workstation, stat->nb_station * sizeof(t_workstation));
+                                stat->workstation[k].nb_operation = 0;
                                 printf("8\n");
                             }
                             l = 0;
@@ -317,9 +322,9 @@ void assign_station (t_graphe grf, t_workstation **work, int *nb_station) {
             printf("12\n");
             if (ajout == 1){
                 printf("13\n");
-                work[k]->nb_operation++;
-                work[k]->sommet_in = (t_sommet *)realloc(work[k]->sommet_in, work[k]->nb_operation * sizeof(t_sommet));
-                work[k]->sommet_in[work[k]->nb_operation-1] = grf.sommet[i];
+                stat->workstation[k].nb_operation++;
+                stat->workstation[k].sommet_in = (t_sommet *)realloc(stat->workstation[k].sommet_in, stat->workstation[k].nb_operation * sizeof(t_sommet));
+                stat->workstation[k].sommet_in[stat->workstation[k].nb_operation-1] = grf.sommet[i];
             }
             printf("14\n");
         }
@@ -328,12 +333,14 @@ void assign_station (t_graphe grf, t_workstation **work, int *nb_station) {
     printf("16\n");
 }
 
-void affiche_workstation (t_workstation *work,int nb_station){
-    for (int i = 0; i < nb_station; i++){
-        printf("Dans la workstation numéro %d il y a les opérations : ", i);
-        for (int j = 0; j < work[i].nb_operation; j++){
-            printf("%2d ", work[i].sommet_in[j].valeur);
+void affiche_workstation (t_chaine_op stat){
+    printf("Il y a %d station\n", stat.nb_station);
+    for (int i = 0; i < stat.nb_station; i++){
+        printf("Dans la workstation numero %d il y a les operations : ", i);
+        for (int j = 0; j < stat.workstation[i].nb_operation; j++){
+            printf("%2d ", stat.workstation[i].sommet_in[j].valeur);
         }
+        printf("\n");
     }
 }
 
@@ -350,7 +357,7 @@ void affichage_adjacence (t_graphe grf){
 
 int main(){
     t_graphe graphe; // création du graphe 1
-    t_workstation *station; //création d'une liste de workstation
+    t_chaine_op station_op; //création d'une liste de workstation
     int temps_cycle;
     int nb_stat;
 
@@ -384,16 +391,16 @@ int main(){
     adjacence(&graphe);
 
     //Calcul des workstation
-    //assign_station(graphe, &station, &nb_stat);
+    assign_station(graphe, &station_op);
 
     // Affichage graphe
-    afficher_graphe(graphe);
+    //afficher_graphe(graphe);
 
     //Affichage adjacence
     affichage_adjacence(graphe);
 
     //Affichage des station
-    //affiche_workstation(station, nb_stat);
+    affiche_workstation(station_op);
 
     //free(nom);
 
