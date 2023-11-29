@@ -4,6 +4,10 @@
 
 #include "header.h"
 
+/**********************************************************************************************************************
+ * Création des sommets
+ *********************************************************************************************************************/
+
 //création des sommets
 void creerSommet (t_graphe *grf, FILE *fichier){
 
@@ -30,6 +34,10 @@ void creerSommet (t_graphe *grf, FILE *fichier){
     }
     grf->ordre = ordre;
 }
+
+/**********************************************************************************************************************
+ * Création des arêtes de type 0 et 1
+ *********************************************************************************************************************/
 
 // Initialisation des arrêtes
 void creerArrete(t_graphe *grf, FILE *fichier, int type) {
@@ -120,6 +128,10 @@ void creerArrete(t_graphe *grf, FILE *fichier, int type) {
     }
 }
 
+/**********************************************************************************************************************
+ * Chargement fichier de précédence et opérations
+ *********************************************************************************************************************/
+
 void init_graphe (char *nomfichier_op, char *nomfichier_pre, t_graphe *grf){
 
     FILE *fichier_op = fopen(nomfichier_op,"r");
@@ -142,6 +154,10 @@ void init_graphe (char *nomfichier_op, char *nomfichier_pre, t_graphe *grf){
     creerArrete(grf, fichier_pre, 0);
 }
 
+/**********************************************************************************************************************
+ * Chargement fichier d'exclusion
+ *********************************************************************************************************************/
+
 void init_exclusion (char *nomfichier_exclu, t_graphe *grf){
     FILE *fichier_exclu = fopen(nomfichier_exclu,"r");
     if(!fichier_exclu){
@@ -152,6 +168,10 @@ void init_exclusion (char *nomfichier_exclu, t_graphe *grf){
     fseek(fichier_exclu, 0, SEEK_SET); // on retourne au début du fichier
     creerArrete(grf, fichier_exclu, 1);
 }
+
+/**********************************************************************************************************************
+ * Affichage du graphe
+ *********************************************************************************************************************/
 
 void afficher_graphe(t_graphe grf) {
     printf("Ordre : %d \n", grf.ordre);
@@ -191,6 +211,10 @@ void afficher_graphe(t_graphe grf) {
         }
     }
 }
+/**********************************************************************************************************************
+ * Chargement temps de cycle
+ *********************************************************************************************************************/
+
 void afficher_temps_cycle(char *nom_fichier,int *temps) {
     FILE *fichier = fopen(nom_fichier, "r");
     if (fichier==NULL) {
@@ -212,9 +236,226 @@ void afficher_temps_cycle(char *nom_fichier,int *temps) {
     }
 }
 
+/**********************************************************************************************************************
+ * Réponse à la contrainte d'exclusion
+ *********************************************************************************************************************/
+
+//recherche des adjacences
+
+void adjacence (t_graphe *grf){
+    int j;
+    for (int i=0; i<grf->ordre; i++){
+        j=0;
+        grf->sommet[i].sommet_adjacent =(int*)malloc(j*sizeof(int));
+        t_arc* arc_actuel =  grf->sommet[i].arc;
+
+        while (arc_actuel!=NULL){
+            if(arc_actuel->type==1){
+                grf->sommet[i].sommet_adjacent = (int*)realloc(grf->sommet[i].sommet_adjacent, (j+1) * sizeof(int));
+                grf->sommet[i].sommet_adjacent[j] = arc_actuel->sommet;
+                j++;
+            }
+            arc_actuel = arc_actuel->arc_suivant;
+        }
+        grf->sommet[i].sommet_adjacent = (int*)realloc(grf->sommet[i].sommet_adjacent, (j+1) * sizeof(int));
+        grf->sommet[i].sommet_adjacent[j] = -1;
+    }
+}
+
+//répartition des workstation
+
+void assign_station (t_graphe grf, t_chaine_op *stat) {
+
+    //Init val = 0
+    stat->nb_station = 0;
+    printf("nb_station %d", stat->nb_station);
+
+    int comptage_som = 0;
+
+    //Si ordre > 0 alors il y a au moins une station
+    if (grf.ordre != 0) {
+        stat->nb_station = stat->nb_station + 1;
+        printf("nb_station %d", stat->nb_station);
+    }
+    printf("1\n");
+    if (stat->nb_station > 0) {
+
+        //on ajoute le premier sommet//
+        printf("2\n");
+        comptage_som++;
+        stat->workstation = (t_workstation *) malloc(stat->nb_station * sizeof(t_workstation)); //allocation dynamique 1er station
+        stat->workstation[0].sommet_in = (t_sommet *) malloc(comptage_som * sizeof(t_sommet)); //allocation dynamique 1er sommet
+        stat->workstation[0].sommet_in[comptage_som - 1] = grf.sommet[0]; //Ajoute le 1er sommet
+        stat->workstation[0].nb_operation = comptage_som; // save nb sommet
+        //                          //
+
+        printf("3\n");
+        printf("nb_station %d", stat->nb_station);
+        for (int i = 1; i < grf.ordre; i++) { // tableau de sommet
+            int k=0;
+            int ajout = 1;
+            printf("4\n");
+            for (int j = 0; grf.sommet[i].sommet_adjacent[j] != -1; j++) { //tableau d'exclusion
+                printf("5\n");
+                    for (int l = 0; l < stat->workstation[k].nb_operation; l++) {
+                        printf("6\n");
+                        // si égalité alors exclusion donc changement de station
+                        if (grf.sommet[i].sommet_adjacent[j] == stat->workstation[k].sommet_in[l].valeur) {
+                            k++;
+                            printf("7\n");
+                            //création nouvelle station
+                            if(k+1>stat->nb_station){
+                                stat->nb_station = k+1;
+                                stat->workstation = (t_workstation*)realloc(stat->workstation, stat->nb_station * sizeof(t_workstation));
+                                stat->workstation[k].nb_operation = 1;
+                                stat->workstation[k].sommet_in = (t_sommet *) malloc(stat->workstation[k].nb_operation * sizeof(t_sommet)); //allocation dynamique 1er sommet
+                                stat->workstation[k].sommet_in[0] = grf.sommet[i]; //Ajoute le 1er sommet
+                                printf("8\n");
+                                ajout = 0;
+                            }
+                            else {
+                                j=-1;
+                                break;
+                            }
+                           // l = 0; // on re scan
+                            printf("9\n");
+                        }
+                        printf("10\n");
+                    }
+                printf("11\n");
+
+            }
+            printf("12\n");
+            if (ajout == 1){
+                printf("13\n");
+                stat->workstation[k].nb_operation++;
+                stat->workstation[k].sommet_in = (t_sommet *)realloc(stat->workstation[k].sommet_in, stat->workstation[k].nb_operation * sizeof(t_sommet));
+                stat->workstation[k].sommet_in[stat->workstation[k].nb_operation-1] = grf.sommet[i];
+            }
+            printf("14\n");
+        }
+        printf("15\n");
+    }
+    printf("16\n");
+}
+
+void affiche_workstation (t_chaine_op stat){
+    printf("Il y a %d station\n", stat.nb_station);
+    for (int i = 0; i < stat.nb_station; i++){
+        printf("Dans la workstation numero %d il y a les operations : ", i);
+        for (int j = 0; j < stat.workstation[i].nb_operation; j++){
+            printf("%2d ", stat.workstation[i].sommet_in[j].valeur);
+        }
+        printf("\n");
+    }
+}
+
+void affichage_adjacence (t_graphe grf){
+    for (int i=0; i<grf.ordre; i++){
+        printf("Le sommet %d : ", grf.sommet[i].valeur);
+        for (int j=0; grf.sommet[i].sommet_adjacent[j] != -1; j++){
+            printf("%2d ", grf.sommet[i].sommet_adjacent[j]);
+        }
+        printf("\n");
+    }
+}
+
+/**********************************************************************************************************************
+ * Réponse à la contrainte de précédence
+ *********************************************************************************************************************/
+
+// On effectue un tri topologique pour obtenir un graphe acyclique orienté
+
+// Fonction pour initialiser la pile vide
+struct Noeud* InitialisationPile() {
+    struct Noeud* Noeud = (struct Noeud*)malloc(sizeof(struct Noeud));
+    Noeud->top = NULL;
+    return Noeud;
+}
+
+// Fonction pour empiler le sommet sur la pile
+void Empiler(struct Noeud* Noeud, int value) {
+    struct PileNoeud* NouveauNoeud = (struct PileNoeud*)malloc(sizeof(struct PileNoeud));
+    NouveauNoeud->value = value;
+    NouveauNoeud->next = Noeud->top;
+    Noeud->top = NouveauNoeud;
+}
+
+// Fonction pour dépiler le sommet de la pile
+int pop(struct Noeud* Noeud) {
+    if (Noeud->top == NULL) {
+        // Si la pile est vide on renvoie un message d'erreur
+        return -1; // erreur
+    }
+    int value = Noeud->top->value;
+    struct PileNoeud* temp = Noeud->top;
+    Noeud->top = Noeud->top->next;
+    free(temp);
+    return value;
+}
+
+// Fonction bis pour le tri topologique
+void TriTopologiqueBis(t_graphe* grf, int sommet, int* visited, struct Noeud* Noeud) {
+    // Marquer le sommet comme visité
+    visited[sommet] = 1;
+
+    // On parcourt tous les sommets adjacents
+    for (int i = 0; i < grf->ordre; i++) {
+        if (grf->sommet[i].arc != NULL) {
+            t_arc* arc_actuel = grf->sommet[i].arc;
+            while (arc_actuel != NULL) {
+                if (arc_actuel->sommet == sommet && !visited[grf->sommet[i].valeur]) {
+                    // On trie récursivement les sommets adjacents non visités
+                    TriTopologiqueBis(grf, grf->sommet[i].valeur, visited, Noeud);
+                }
+                arc_actuel = arc_actuel->arc_suivant;
+            }
+        }
+    }
+
+    // On empile le sommet  sur la pile
+    Empiler(Noeud, sommet);
+}
+
+// Fonction de tri topologique
+void TriTopologique(t_graphe* grf, struct Noeud* Noeud) {
+    int* visite = (int*)malloc((grf->ordre + 1) * sizeof(int));
+
+    // on initialise le tableau visite à vide (0)
+    for (int i = 0; i <= grf->ordre; i++) {
+        visite[i] = 0;
+    }
+
+    // on parcoure tous les sommets du graphe
+    for (int i = 0; i < grf->ordre; i++) {
+        if (!visite[grf->sommet[i].valeur]) {
+            TriTopologiqueBis(grf, grf->sommet[i].valeur, visite, Noeud);
+        }
+    }
+
+    // ojn libère la mémoire du tableau visite
+    free(visite);
+}
+
+// Fonction pour afficher le résultat du tri topologique
+void AffichageTopologique(struct Noeud* Noeud) {
+    printf("Ordre topologique : ");
+    while (Noeud->top != NULL) {
+        printf("%d ", pop(Noeud));
+    }
+    printf("monstre\n");
+}
+
+
+
+
+
 int main(){
-    t_graphe precedence; // création du graphe 1
+
+    t_graphe graphe; // création du graphe 1
+    t_chaine_op station_op; //création d'une chaine de production
     int temps_cycle;
+    int nb_stat;
 
     //récupération du nom du fichier
     char recip_nom[50];
@@ -235,17 +476,53 @@ int main(){
     strcpy(nom, recip_nom);
     fflush(NULL);*/
 
-    // Afficher le temps de cycle
-    afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
+    /*******************************************************************************************************************
+     *
+     * Ne pas décommenter !! Fonction essentiel au fonctionnement
+     *
+     *******************************************************************************************************************/
     // Initialisation du graphe
-    init_graphe(fic_operation, fic_precedence, &precedence);
+    init_graphe(fic_operation, fic_precedence, &graphe);
     //chargement des exclusions
-    init_exclusion(fic_exclusion, &precedence);
+    init_exclusion(fic_exclusion, &graphe);
+    //adjacence
+    adjacence(&graphe);
+    //Calcul des workstation
+    assign_station(graphe, &station_op);
+    /*******************************************************************************************************************
+     *******************************************************************************************************************/
 
-    // Affichage precedence
-    afficher_graphe(precedence);
 
+    ///FONCTION D'AFFICHAGE D'INFO//////////////////////////////
+
+    // Afficher le temps de cycle
+    //afficher_temps_cycle(fic_temps_cycle, &temps_cycle);
+
+    // Affichage graphe
+    //afficher_graphe(graphe);
+
+    //Affichage adjacence
+    //affichage_adjacence(graphe);
+
+    //Affichage des station
+    affiche_workstation(station_op);
+    ///////////////////////////////////////////////////////////
+
+    ///Libération mémoire//////////////////////////////////////
     //free(nom);
+
+
+    // Initialisation de la pile
+    struct Noeud* Pile = InitialisationPile();
+
+    // Effectuer le tri topologique
+    TriTopologique(&graphe, Pile);
+
+    // Afficher l'ordre topologique
+    AffichageTopologique(Pile);
+
+    // Libérer la mémoire de la pile
+    free(Pile);
 
 
 }
