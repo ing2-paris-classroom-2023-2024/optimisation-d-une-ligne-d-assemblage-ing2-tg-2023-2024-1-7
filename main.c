@@ -447,7 +447,141 @@ void AffichageTopologique(struct Noeud* Noeud) {
 }
 
 
+/*
 
+
+// répartition des workstations
+
+
+
+// Fonction pour trouver un arc spécifique entre deux opérations
+t_arc* findArc(t_sommet* source, t_sommet* destination, int type) {
+    t_arc* arc = source->arc;
+
+    while (arc != NULL) {
+        if (arc->type == type && arc->sommet == destination->valeur) {
+            return arc;
+        }
+        arc = arc->arc_suivant;
+    }
+
+    return NULL;
+}
+
+
+int calculatePrecedenceTime(t_sommet* operation, t_WorkstationPrecedence* station) {
+    int maxPrecedenceTime = 0;
+
+    // Parcours de toutes les opérations dans la station
+    for (int i = 0; i < station->nb_operation; i++) {
+        t_sommet* stationOperation = &station->sommet_in[i];
+
+        // Recherche de l'arc de type 0 (précédence) entre l'opération actuelle et la station
+        t_arc* arc = findArc(operation, stationOperation, 0);
+
+        // Si l'arc existe, calcul du temps dû à la précédence
+        if (arc != NULL) {
+            int precedenceTime = stationOperation->temps + arc->poids;
+            if (precedenceTime > maxPrecedenceTime) {
+                maxPrecedenceTime = precedenceTime;
+            }
+        }
+    }
+
+    return maxPrecedenceTime;
+}
+
+int findOptimalStation(t_ChaineOpPrecedence* stations, t_sommet* operation, int tempsCycle,int maxPrecedenceTime) {
+    int minTime = maxPrecedenceTime;
+    int minIndex = -1;
+
+    // Parcours de toutes les stations pour trouver la première disponible et optimale
+    for (int i = 0; i < stations->nb_stationprecedence; i++) {
+        int tempsTotalStation =
+                stations->workstationprecedence[i].tempsTotal + operation->temps + calculatePrecedenceTime(operation, &stations->workstationprecedence[i]);
+
+        if (tempsTotalStation <= tempsCycle && tempsTotalStation < minTime) {
+            minTime = tempsTotalStation;
+            minIndex = i;
+        }
+    }
+
+    if (minIndex == -1) {
+        // Aucune station existante n'est compatible, il faut créer une nouvelle station
+        minIndex = stations->nb_stationprecedence;
+        stations->nb_stationprecedence++;
+        stations->workstationprecedence = realloc(stations->workstationprecedence, stations->nb_stationprecedence * sizeof(t_WorkstationPrecedence));
+        stations->workstationprecedence[minIndex].sommet_in = NULL;
+        stations->workstationprecedence[minIndex].nb_operation = 0;
+        stations->workstationprecedence[minIndex].tempsTotal = 0;
+    }
+
+    return minIndex;
+}
+
+void addOperationToStation(t_WorkstationPrecedence* station, t_sommet* operation) {
+    int nb_operation = station->nb_operation;
+    station->sommet_in = realloc(station->sommet_in, (nb_operation + 1) * sizeof(t_sommet));
+    station->sommet_in[nb_operation] = *operation;
+    station->nb_operation++;
+}
+
+
+// Fonction d'affichage des workstations de précédence
+
+void afficheWorkstationPrecedence(t_ChaineOpPrecedence stat_precedence){
+    printf("Il y a %d station avec précédence\n", stat_precedence.nb_stationprecedence);
+    for (int i = 0; i < stat_precedence.nb_stationprecedence; i++){
+        printf("Dans la workstation avec précédence numéro %d, il y a les opérations : ", i);
+        for (int j = 0; j < stat_precedence.workstationprecedence[i].nb_operation; j++){
+            printf("%2d ", stat_precedence.workstationprecedence[i].sommet_in[j].valeur);
+        }
+        printf("\n");
+    }
+}
+
+
+
+
+void assignWorkstationPrecedence(t_graphe* grf, t_ChaineOpPrecedence* station_op_precedence, int tempsCycle) {
+    // Initialisation des workstations avec précédence
+    t_ChaineOpPrecedence result_precedence;
+    result_precedence.nb_stationprecedence = 0;
+    result_precedence.workstationprecedence = NULL;
+
+    // Initialisation de la pile pour le tri topologique
+    struct Noeud* Pile = InitialisationPile();
+
+    // Tri topologique
+    TriTopologique(grf, Pile);
+
+    // Parcours des sommets dans l'ordre topologique
+    for (int i = 0; i < grf->ordre; i++) {
+        int sommetIndex = pop(Pile);
+
+        // Recherche de la station optimale pour le sommet
+        int optimalStationIndex = findOptimalStation(&result_precedence, &grf->sommet[sommetIndex], tempsCycle, tempsCycle);
+
+        // Ajout du sommet à la station optimale
+        addOperationToStation(&result_precedence.workstationprecedence[optimalStationIndex], &grf->sommet[sommetIndex]);
+
+        // Mise à jour de la durée totale de la station optimale
+        result_precedence.workstationprecedence[optimalStationIndex].tempsTotal +=
+                grf->sommet[sommetIndex].temps + calculatePrecedenceTime(&grf->sommet[sommetIndex], &result_precedence.workstationprecedence[optimalStationIndex]);
+    }
+
+    // Affichage des résultats
+    afficheWorkstationPrecedence(result_precedence);
+
+    // Assignation des résultats à la chaîne de production avec précédence
+    station_op_precedence->nb_stationprecedence = result_precedence.nb_stationprecedence;
+    station_op_precedence->workstationprecedence = result_precedence.workstationprecedence;
+
+    // Libérer la mémoire de la pile
+    free(Pile);
+}
+
+ */
 
 
 int main(){
@@ -523,6 +657,11 @@ int main(){
 
     // Libérer la mémoire de la pile
     free(Pile);
+/*
+    // Calcul des workstations avec précédence
+    assignWorkstationPrecedence(&graphe, &station_op, temps_cycle);
+
+    */
 
 
 }

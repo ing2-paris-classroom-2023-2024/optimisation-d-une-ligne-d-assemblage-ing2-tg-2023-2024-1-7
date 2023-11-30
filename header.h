@@ -49,6 +49,8 @@ typedef struct chaine_op{
     int nb_station;
 }t_chaine_op;
 
+/* PRECEDENCE */
+
 
 // Structure du nœud dans la pile
 struct PileNoeud {
@@ -60,6 +62,17 @@ struct PileNoeud {
 struct Noeud {
     struct PileNoeud* top;
 };
+
+typedef struct WorkstationPrecedence {
+    t_sommet* sommet_in;
+    int nb_operation;
+    int tempsTotal;
+} t_WorkstationPrecedence;
+
+typedef struct ChaineOpPrecedence {
+    t_WorkstationPrecedence* workstationprecedence;
+    int nb_stationprecedence;
+} t_ChaineOpPrecedence;
 
 
 #endif //OPTIMISATION_D_UNE_LIGNE_D_ASSEMBLAGE_ING2_TG_2023_2024_1_7_HEADER_H
