@@ -24,7 +24,9 @@ typedef struct arc t_arc;
 typedef struct sommet{
 
     int valeur; //numéro de l'opération
-    int* sommet_adjacent;
+    int marque;
+    int* sommet_adjacent; //pour le graphe d'exclusion
+    int* sommet_pre; //pour le graphe de précédence
     float temps; // temps opération
     t_arc *arc;
 
@@ -42,6 +44,7 @@ typedef struct graphe{
 typedef struct workstation{
     t_sommet* sommet_in;
     int nb_operation;
+    float temps_tot;
 }t_workstation;
 
 typedef struct chaine_op{
@@ -52,7 +55,7 @@ typedef struct chaine_op{
 /* PRECEDENCE */
 
 
-// Structure du nœud dans la pile
+/*// Structure du nœud dans la pile
 struct PileNoeud {
     int value;
     struct PileNoeud* next;
@@ -63,6 +66,7 @@ struct Noeud {
     struct PileNoeud* top;
 };
 
+/*
 typedef struct WorkstationPrecedence {
     t_sommet* sommet_in;
     int nb_operation;
@@ -72,7 +76,7 @@ typedef struct WorkstationPrecedence {
 typedef struct ChaineOpPrecedence {
     t_WorkstationPrecedence* workstationprecedence;
     int nb_stationprecedence;
-} t_ChaineOpPrecedence;
+} t_ChaineOpPrecedence;*/
 
 
 #endif //OPTIMISATION_D_UNE_LIGNE_D_ASSEMBLAGE_ING2_TG_2023_2024_1_7_HEADER_H
