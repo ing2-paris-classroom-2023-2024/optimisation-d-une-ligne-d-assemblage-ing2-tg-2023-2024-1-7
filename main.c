@@ -317,7 +317,6 @@ void assign_station (t_graphe grf, t_chaine_op *stat) {
 }
 
 void affiche_workstation (t_chaine_op stat){
-    printf("\n\n\n");
     printf("Il y a %d station\n", stat.nb_station);
     for (int i = 0; i < stat.nb_station; i++){
         printf("Dans la workstation numero %d : \n", i);
@@ -598,6 +597,9 @@ int main(){
     //affichage_adjacence(graphe);
 
     //Affichage des station
+    printf("\n\n\n");
+    printf("Contrainte d'exclusion seule : \n");
+    printf("\n");
     affiche_workstation(station_op_exclu);
     ///////////////////////////////////////////////////////////
 
@@ -611,5 +613,8 @@ int main(){
     precedence(graphe, &station_op_pre, temps_cycle);
 
     //Affichage des station
+    printf("\n\n\n");
+    printf("Contrainte de precedence et de temps de cycle seule : \n");
+    printf("\n");
     affiche_workstation(station_op_pre);
 }
